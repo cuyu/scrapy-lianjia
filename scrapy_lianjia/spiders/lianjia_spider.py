@@ -21,6 +21,12 @@ class LianjiaSpider(scrapy.Spider):
             url = response.urljoin(house_info.xpath("div/a/@href").extract()[0])
             yield scrapy.Request(url, callback=self.parse_house_info)
 
+        next_page_href = response.xpath("//div[@class='page-box house-lst-page-box']/a/@href").extract()[-1]
+        is_on_last_page = response.xpath("//div[@class='page-box house-lst-page-box']/a")[-1].xpath("@class")
+        if not is_on_last_page:
+            url = response.urljoin(next_page_href)
+            yield scrapy.Request(url, self.parse)
+
     def parse_house_info(self, response):
         sel_houseinfo = response.css("body > div.esf-top > div.cj-cun > div.content > div.houseInfo")
         item = LianjiaItem()
