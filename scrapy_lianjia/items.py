@@ -14,3 +14,4 @@ class LianjiaItem(scrapy.Item):
     price = scrapy.Field()
     room = scrapy.Field()
     area = scrapy.Field()
+    url = scrapy.Field()

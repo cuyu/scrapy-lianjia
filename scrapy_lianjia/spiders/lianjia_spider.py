@@ -28,9 +28,17 @@ class LianjiaSpider(scrapy.Spider):
             yield scrapy.Request(url, self.parse)
 
     def parse_house_info(self, response):
-        sel_houseinfo = response.css("body > div.esf-top > div.cj-cun > div.content > div.houseInfo")
+        sel_houseinfo = response.xpath("//div[@class='houseInfo']")
         item = LianjiaItem()
-        item['price'] = sel_houseinfo.css("div.price > div").extract()
-        item['room'] = sel_houseinfo.css("div.room > div").extract()
-        item['area'] = sel_houseinfo.css('div.area > div').extract()
+        item['url'] = response.url
+        item['price'] = sel_houseinfo.xpath("div[@class='price']/div/text()").extract()[0] + \
+                        sel_houseinfo.xpath("div[@class='price']/div/span/text()").extract()[0]
+        room_info = ''
+        room_num = sel_houseinfo.xpath("div[@class='room']/div/text()").extract()
+        room_unit = sel_houseinfo.xpath("div[@class='room']/div/span/text()").extract()
+        for i in range(len(room_num)):
+            room_info += room_num[i] + room_unit[i]
+        item['room'] = room_info
+        item['area'] = sel_houseinfo.xpath("div[@class='area']/div/text()").extract()[0] + \
+                       sel_houseinfo.xpath("div[@class='area']/div/span/text()").extract()[0]
         yield item
