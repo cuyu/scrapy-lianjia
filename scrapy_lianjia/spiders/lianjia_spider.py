@@ -5,7 +5,7 @@
 '''
 
 import scrapy
-
+import time
 from scrapy_lianjia.items import LianjiaItem
 
 
@@ -17,6 +17,7 @@ class LianjiaSpider(scrapy.Spider):
     ]
 
     def parse(self, response):
+        self.logger.info('Start parsing {0}'.format(response.url))
         for house_info in response.xpath("//ul[@id='house-lst']/li"):
             url = response.urljoin(house_info.xpath("div/a/@href").extract()[0])
             yield scrapy.Request(url, callback=self.parse_house_info)
@@ -28,6 +29,10 @@ class LianjiaSpider(scrapy.Spider):
             yield scrapy.Request(url, self.parse)
 
     def parse_house_info(self, response):
+        self.logger.info('Start parsing {0}'.format(response.url))
+        # FIXME: Use more graceful method to handle the redirect issue.
+        # Sleep some time to work around the `anti-crawl` mechanism
+        time.sleep(2)
         sel_houseinfo = response.xpath("//div[@class='houseInfo']")
         item = LianjiaItem()
         item['url'] = response.url

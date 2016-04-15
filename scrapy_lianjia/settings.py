@@ -83,3 +83,5 @@ NEWSPIDER_MODULE = 'scrapy_lianjia.spiders'
 #HTTPCACHE_DIR='httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES=[]
 #HTTPCACHE_STORAGE='scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+#REDIRECT_ENABLED = False
